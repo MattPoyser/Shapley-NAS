@@ -331,6 +331,8 @@ def infer(valid_queue, model, criterion):
 
 
 if __name__ == '__main__':
-
-  main()
+    start_time = time.time()
+    print("start time", start_time)
+    main()
+    print("end time", time.time() - start_time)
 
