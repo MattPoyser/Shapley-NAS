@@ -88,7 +88,7 @@ def get_data(args):
             test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name,
                                    subset_size=10000)
         else:
-            test_data = dset_cls(root=args.tmp_data_dir, train=False, download=False, transform=test_transform)
+            test_data = dset_cls(root=args.data, train=False, download=False, transform=test_transform)
     else:
         if args.vanilla:
             if args.set == "imagenet":
@@ -98,8 +98,8 @@ def get_data(args):
                                         dataset_name=dynamic_name, subset_size=subset_size)
                 test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=subset_size)
             else:
-                train_data = dset_cls(root=args.tmp_data_dir, train=True, download=False, transform=train_transform)
-                test_data = dset_cls(root=args.tmp_data_dir, train=False, download=False, transform=test_transform)
+                train_data = dset_cls(root=args.data, train=True, download=False, transform=train_transform)
+                test_data = dset_cls(root=args.data, train=False, download=False, transform=test_transform)
         else: #abl
             if args.set == "imagenet":
                 train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False,
