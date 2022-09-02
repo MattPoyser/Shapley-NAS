@@ -55,6 +55,7 @@ parser.add_argument('--subset_size', type=int, default=100, help='subset paramet
 parser.add_argument('--hardness', type=float, default=0.9, help='hardness parameter')
 parser.add_argument('--mastery', type=float, default=0.1, help='mastery parameter')
 parser.add_argument('--dynamic', type=bool, default=False, help='are we doing dynamic dataset')
+parser.add_argument('--vanilla', type=bool, default=False, help='are we doing vanilla')
 parser.add_argument('--isbad', type=bool, default=False, help='are we using bad autoencoder (ablation)')
 parser.add_argument('--isTree', type=bool, default=False, help='do we use tree in dynamic dataloader (probably true)')
 parser.add_argument('--init_train_epochs', type=int, default=5, help='minimum no. epochs to train before updating dynamic subset')
