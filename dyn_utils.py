@@ -19,29 +19,29 @@ def get_data(args):
     nz = 8
     aisize = 3
     is_concat=False
-    if args.dataset == "mnist":
+    if args.set == "mnist":
         dset_cls = dset.MNIST
         dynamic_name = "mnist"
         grayscale = True
         auto_resume = "/home2/lgfm95/hem/perceptual/ganPercMnistGood.pth.tar"
         aisize = 1
-    elif args.dataset == "fashion":
+    elif args.set == "fashion":
         dset_cls = dset.FashionMNIST
         dynamic_name = "fashion"
         grayscale = True
         auto_resume = "/home2/lgfm95/hem/perceptual/ganPercFashionGood.pth.tar"
         aisize = 1
-    elif args.dataset == "cifar10":
+    elif args.set == "cifar10":
         dset_cls = dset.CIFAR10
         dynamic_name = "cifar10"
         auto_resume = "/home2/lgfm95/hem/perceptual/tripletCifar10MseKGood.pth.tar"
         nz = 32
-    elif args.dataset == "cifar100":
+    elif args.set == "cifar100":
         dset_cls = dset.CIFAR100
         dynamic_name = "cifar100"
         auto_resume = "/home2/lgfm95/hem/perceptual/tripletCifar10MseKGood.pth.tar"
         nz = 32
-    elif args.dataset == "imagenet":
+    elif args.set == "imagenet":
         dynamic_name = "imagenet"
         isize = 256
         auto_resume = "/home2/lgfm95/hem/perceptual/ganPercImagenetGood.pth.tar"
@@ -84,14 +84,14 @@ def get_data(args):
             seed=args.seed)
             # is_csv=False)
         # is_csv=False)
-        if args.dataset == "imagenet":
+        if args.set == "imagenet":
             test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name,
                                    subset_size=10000)
         else:
             test_data = dset_cls(root=args.tmp_data_dir, train=False, download=False, transform=test_transform)
     else:
         if args.vanilla:
-            if args.dataset == "imagenet":
+            if args.set == "imagenet":
                 subset_size = 10000
                 dynamic_name = "imagenet"
                 train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False,
@@ -101,7 +101,7 @@ def get_data(args):
                 train_data = dset_cls(root=args.tmp_data_dir, train=True, download=False, transform=train_transform)
                 test_data = dset_cls(root=args.tmp_data_dir, train=False, download=False, transform=test_transform)
         else: #abl
-            if args.dataset == "imagenet":
+            if args.set == "imagenet":
                 train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False,
                                         dataset_name=dynamic_name, subset_size=args.subset_size)
                 test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=args.subset_size)
