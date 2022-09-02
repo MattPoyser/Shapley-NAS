@@ -127,19 +127,19 @@ def main():
 
     train_queue = torch.utils.data.DataLoader(
         train_data, batch_size=args.batch_size,
-        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
+        # sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
         pin_memory=True)
 
     valid_queue = torch.utils.data.DataLoader(
         # train_data, batch_size=1024,
         val_data, batch_size=1024,
-        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
+        # sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
         pin_memory=True, num_workers=8)
 
     infer_queue = torch.utils.data.DataLoader(
         # train_data, batch_size=args.batch_size // 2,
         val_data, batch_size=args.batch_size // 2,
-        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
+        # sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
         pin_memory=True)
 
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
