@@ -101,7 +101,7 @@ class Cell(nn.Module):
 
 class Network(nn.Module):
 
-  def __init__(self, C, num_classes, layers, criterion, steps=4, multiplier=4, stem_multiplier=3, k=4
+  def __init__(self, C, num_classes, layers, criterion, steps=4, multiplier=4, stem_multiplier=3, k=4, grayscale=False
                ):
     super(Network, self).__init__()
     self._C = C
@@ -113,8 +113,11 @@ class Network(nn.Module):
     self.k = k
 
     C_curr = stem_multiplier*C
+    init_channels = 3
+    if grayscale:
+      init_channels = 1
     self.stem = nn.Sequential(
-      nn.Conv2d(3, C_curr, 3, padding=1, bias=False),
+      nn.Conv2d(init_channels, C_curr, 3, padding=1, bias=False),
       nn.BatchNorm2d(C_curr)
     )
  

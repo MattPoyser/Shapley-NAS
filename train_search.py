@@ -99,7 +99,10 @@ def main():
 
     criterion = nn.CrossEntropyLoss()
     criterion = criterion.cuda()
-    model = Network(args.init_channels, CIFAR_CLASSES, args.layers, criterion)
+    grayscale = False
+    if args.set == "mnist" or args.set == "fashion":
+        grayscale = True
+    model = Network(args.init_channels, CIFAR_CLASSES, args.layers, criterion, grayscale=grayscale)
     model = model.cuda()
     logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
     if args.resume:
