@@ -116,6 +116,7 @@ class Network(nn.Module):
     init_channels = 3
     if grayscale:
       init_channels = 1
+    print(f"using {init_channels} init channels", grayscale)
     self.stem = nn.Sequential(
       nn.Conv2d(init_channels, C_curr, 3, padding=1, bias=False),
       nn.BatchNorm2d(C_curr)

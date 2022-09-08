@@ -102,6 +102,8 @@ def main():
     grayscale = False
     if args.set == "mnist" or args.set == "fashion":
         grayscale = True
+
+    print(f"using {grayscale} grayscaleness", args.set)
     model = Network(args.init_channels, CIFAR_CLASSES, args.layers, criterion, grayscale=grayscale)
     model = model.cuda()
     logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
