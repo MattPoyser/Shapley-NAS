@@ -58,6 +58,7 @@ parser.add_argument('--mastery', type=float, default=0.1, help='mastery paramete
 parser.add_argument('--dynamic', type=bool, default=False, help='are we doing dynamic dataset')
 parser.add_argument('--vanilla', type=bool, default=False, help='are we doing vanilla')
 parser.add_argument('--isbad', type=bool, default=False, help='are we using bad autoencoder (ablation)')
+parser.add_argument('--isablation', type=bool, default=False, help='are we using restricted dataset size? (ablation)')
 parser.add_argument('--isTree', type=bool, default=False, help='do we use tree in dynamic dataloader (probably true)')
 parser.add_argument('--init_train_epochs', type=int, default=5, help='minimum no. epochs to train before updating dynamic subset')
 parser.add_argument('--is_csv', type=bool, default=False, help='saving with csv?')
@@ -126,7 +127,7 @@ def main():
     indices = list(range(num_train))
     split = int(np.floor(args.train_portion * num_train))
 
-    if args.isAblation:
+    if args.isablation:
         assert not args.dynamic
         assert args.vanilla
         train_indices = random.sample(list(range(num_train)), 1000)
