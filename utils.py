@@ -81,6 +81,35 @@ def _data_transforms_cifar10(args):
     return train_transform, valid_transform
 
 
+def _data_transforms_general(args):
+    if args.set == "cifar10" or args.set == "cifar100":
+        MEAN = [0.49139968, 0.48215827, 0.44653124]
+        STD = [0.24703233, 0.24348505, 0.26158768]
+    elif args.set == "fashion":
+        MEAN = [0.13066051707548254]
+        STD = [0.30810780244715075]
+    elif args.set == "mnist":
+        MEAN = [0.28604063146254594]
+        STD = [0.35302426207299326]
+    else:
+        raise NotImplementedError("bad args.set")
+
+    train_transform = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(MEAN, STD),
+    ])
+    if args.cutout:
+        train_transform.transforms.append(Cutout(args.cutout_length))
+
+    valid_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(MEAN, STD),
+    ])
+    return train_transform, valid_transform
+
+
 def count_parameters_in_MB(model):
     return np.sum(np.prod(v.size()) for name, v in model.named_parameters() if "auxiliary" not in name) / 1e6
 

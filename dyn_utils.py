@@ -9,7 +9,7 @@ sys.path.insert(0, "/hdd/PhD/hem/perceptual")
 from dataloader_classification import DynamicDataset
 
 def get_data(args):
-    train_transform, test_transform = utils._data_transforms_cifar10(args)
+    train_transform, test_transform = utils._data_transforms_general(args)
     pretrain_resume = "/home2/lgfm95/hem/perceptual/good.pth.tar"
     grayscale = False
     is_detection = False
