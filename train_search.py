@@ -14,6 +14,7 @@ import torch.nn as nn
 import torch.utils
 import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
+import random
 
 from torch.autograd import Variable
 from model_search import Network
@@ -125,16 +126,34 @@ def main():
     indices = list(range(num_train))
     split = int(np.floor(args.train_portion * num_train))
 
-    train_queue = torch.utils.data.DataLoader(
-        train_data, batch_size=args.batch_size,
-        # sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
-        pin_memory=True)
+    if args.isAblation:
+        assert not args.dynamic
+        assert args.vanilla
+        train_indices = random.sample(list(range(num_train)), 1000)
+        val_indices = random.sample(list(range(len(val_data))), 1000)
+        train_sampler = torch.utils.data.sampler.SubsetRandomSampler(train_indices)
+        val_sampler = torch.utils.data.sampler.SubsetRandomSampler(val_indices)
+        train_queue = torch.utils.data.DataLoader(
+            train_data, batch_size=args.batch_size,
+            sampler=train_sampler,
+            pin_memory=True)
 
-    valid_queue = torch.utils.data.DataLoader(
-        # train_data, batch_size=1024,
-        val_data, batch_size=1024,
-        # sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
-        pin_memory=True, num_workers=8)
+        valid_queue = torch.utils.data.DataLoader(
+            # train_data, batch_size=1024,
+            val_data, batch_size=1024,
+            sampler=val_sampler,
+            pin_memory=True, num_workers=8)
+    else:
+        train_queue = torch.utils.data.DataLoader(
+            train_data, batch_size=args.batch_size,
+            # sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
+            pin_memory=True)
+
+        valid_queue = torch.utils.data.DataLoader(
+            # train_data, batch_size=1024,
+            val_data, batch_size=1024,
+            # sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
+            pin_memory=True, num_workers=8)
 
     infer_queue = torch.utils.data.DataLoader(
         # train_data, batch_size=args.batch_size // 2,
