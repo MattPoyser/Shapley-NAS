@@ -187,12 +187,12 @@ def main():
 
     hardness = None
     just_updated = True
-    valid_acc1 = 0
+    valid_acc = 0
 
     for i, current_epochs in enumerate(train_epochs):
         assert i == 1 or i == 0 # sanity check
         for e in range(current_epochs):
-            epoch_type = get_epoch_type(epoch, hardness, valid_acc1, is_pretrain=1 if i==0 else 0)
+            epoch_type = get_epoch_type(epoch, hardness, valid_acc, is_pretrain=1 if i==0 else 0)
             if epoch_type or just_updated or not args.dynamic:  # 1 is train, as normal (0 is dataset update)
                 just_updated = False
                 scheduler.step()
