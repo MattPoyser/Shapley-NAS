@@ -380,7 +380,7 @@ def infer(valid_queue, model, criterion):
 
 ################################# dynamic functions #####################################
 def save_indices(data, epoch, images=None):
-    if args.issave:
+    if not args.badpath and not args.nosave:
         if args.ncc:
             with open(f'/home2/lgfm95/nas/pdarts/tempSave/curriculums/{args.dataset}/indices_{args.dataset}_{epoch}.csv', 'w') as csv_file:
                 csv_writer = csv.writer(csv_file, delimiter=' ')
