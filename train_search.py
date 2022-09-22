@@ -65,6 +65,7 @@ parser.add_argument('--is_csv', type=bool, default=False, help='saving with csv?
 parser.add_argument('--is_detection', type=bool, default=False, help='object detection?')
 parser.add_argument('--ncc', type=bool, default=False, help='are we on ncc?')
 parser.add_argument('--visualize', type=bool, default=False, help='are we visualizing results')
+parser.add_argument('--nosave', default=False, type=bool, help="are we producing visualiation of updates?")
 
 args = parser.parse_args()
 
