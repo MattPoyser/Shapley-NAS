@@ -383,17 +383,17 @@ def infer(valid_queue, model, criterion):
 def save_indices(data, epoch, images=None):
     if not args.nosave:
         if args.ncc:
-            with open(f'/home2/lgfm95/nas/pdarts/tempSave/curriculums/{args.dataset}/indices_{args.dataset}_{epoch}.csv', 'w') as csv_file:
+            with open(f'/home2/lgfm95/nas/pdarts/tempSave/curriculums/{args.set}/indices_{args.set}_{epoch}.csv', 'w') as csv_file:
                 csv_writer = csv.writer(csv_file, delimiter=' ')
                 csv_writer.writerow(data)
             if images is not None:
-                image_dir = f'/home2/lgfm95/nas/pdarts/tempSave/curriculums/{args.dataset}/indices_{args.dataset}_{epoch}'
+                image_dir = f'/home2/lgfm95/nas/pdarts/tempSave/curriculums/{args.set}/indices_{args.set}_{epoch}'
                 os.makedirs(image_dir)
                 for q, image in enumerate(images):
                     image.save(image_dir + f"{q}.png")
 
         else:
-            with open(f'/hdd/PhD/nas/pdarts/tempSave/curriculums/{args.dataset}/indices_{args.dataset}_{epoch}.csv', 'w') as csv_file:
+            with open(f'/hdd/PhD/nas/pdarts/tempSave/curriculums/{args.set}/indices_{args.set}_{epoch}.csv', 'w') as csv_file:
                 csv_writer = csv.writer(csv_file, delimiter=' ')
                 csv_writer.writerow(data)
 
