@@ -72,6 +72,9 @@ def main():
 
   genotype = eval("genotypes.%s" % args.arch)
   logging.info(genotype)
+  grayscale = False
+  if args.set == "mnist" or args.set == "fashion":
+      grayscale = True
   model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
 
   model = model.cuda()
