@@ -106,6 +106,8 @@ def main():
             print("==> loading checkpoint '{}'".format(args.save))
             checkpoint = torch.load(args.save)
             model.load_state_dict(checkpoint.state_dict())
+    else:
+        print("not loading from checkpoint")
 
     criterion = nn.CrossEntropyLoss()
     criterion = criterion.cuda()
