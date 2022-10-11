@@ -102,15 +102,6 @@ def main():
         model = model.cuda()
     logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
 
-    if args.resume is not None:
-        save_checkpoint = os.path.join(args.save, "checkpoint.pth.tar")
-        assert os.path.isfile(save_checkpoint), args.save
-        print("==> loading checkpoint '{}'".format(save_checkpoint))
-        checkpoint = torch.load(save_checkpoint)
-        model.load_state_dict(checkpoint.state_dict())
-    else:
-        print("not loading from checkpoint")
-
     criterion = nn.CrossEntropyLoss()
     criterion = criterion.cuda()
     criterion_smooth = CrossEntropyLabelSmooth(CLASSES, args.label_smooth)
@@ -160,7 +151,21 @@ def main():
     best_acc_top1 = 0
     best_acc_top5 = 0
     lr = args.learning_rate
-    for epoch in range(args.epochs):
+
+    start_epoch = 0
+    if args.resume is not None:
+        save_checkpoint = os.path.join(args.save, "checkpoint.pth.tar")
+        assert os.path.isfile(save_checkpoint), args.save
+        print("==> loading checkpoint '{}'".format(save_checkpoint))
+        checkpoint = torch.load(save_checkpoint)
+        model.load_state_dict(checkpoint['state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        best_acc_top1 = checkpoint['best_acc_top1']
+        start_epoch = checkpoint['epoch']
+    else:
+        print("not loading from checkpoint")
+        
+    for epoch in range(start_epoch, args.epochs):
         if args.lr_scheduler == 'cosine':
             scheduler.step()
             current_lr = scheduler.get_lr()[0]
