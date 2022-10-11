@@ -17,6 +17,7 @@ import torch.backends.cudnn as cudnn
 
 from torch.autograd import Variable
 from model import NetworkImageNet as Network
+import wandb
 
 parser = argparse.ArgumentParser("training imagenet")
 parser.add_argument('--workers', type=int, default=32, help='number of workers to load dataset')
@@ -71,6 +72,12 @@ class CrossEntropyLabelSmooth(nn.Module):
         return loss
 
 def main():
+    os.environ['WANDB_SILENT']="true"
+    wandb.init(
+        entity="mattpoyser",
+        project="shapley",
+        config=args,
+    )
     if not torch.cuda.is_available():
         logging.info('No GPU device available')
         sys.exit(1)
@@ -181,7 +188,8 @@ def main():
             'state_dict': model.state_dict(),
             'best_acc_top1': best_acc_top1,
             'optimizer' : optimizer.state_dict(),
-            }, is_best, args.save)        
+            }, is_best, args.save)
+    wandb.finish()
         
 def adjust_lr(optimizer, epoch):
     # Smaller slope for the last 5 epochs because lr * 1/250 is relatively large
@@ -231,6 +239,8 @@ def train(train_queue, model, criterion, optimizer):
                 start_time = time.time()
             logging.info('TRAIN Step: %03d Objs: %e R1: %f R5: %f Duration: %ds BTime: %.3fs', 
                                     step, objs.avg, top1.avg, top5.avg, duration, batch_time.avg)
+            wandb.log({"loss": objs.avg, "acc": top1.avg, "top5": top5.avg})
+
 
     return top1.avg, objs.avg
 
