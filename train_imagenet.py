@@ -103,10 +103,11 @@ def main():
     logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
 
     if args.resume is not None:
-        if os.path.isfile(args.save):
-            print("==> loading checkpoint '{}'".format(args.save))
-            checkpoint = torch.load(args.save)
-            model.load_state_dict(checkpoint.state_dict())
+        save_checkpoint = os.path.join(args.save, "checkpoint.pth.tar")
+        assert os.path.isfile(save_checkpoint), args.save
+        print("==> loading checkpoint '{}'".format(save_checkpoint))
+        checkpoint = torch.load(save_checkpoint)
+        model.load_state_dict(checkpoint.state_dict())
     else:
         print("not loading from checkpoint")
 
