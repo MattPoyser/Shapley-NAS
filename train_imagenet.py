@@ -44,7 +44,7 @@ parser.add_argument('--note', type=str, default='try', help='note for this run')
 
 args, unparsed = parser.parse_known_args()
 
-args.save = '{}eval-{}-{}'.format(args.save, args.note, time.strftime("%Y%m%d-%H%M%S"))
+# args.save = '{}eval-{}-{}'.format(args.save, args.note, time.strftime("%Y%m%d-%H%M%S"))
 utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 
 log_format = '%(asctime)s %(message)s'
@@ -100,6 +100,12 @@ def main():
     else:
         model = model.cuda()
     logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
+
+    if args.resume is not None:
+        if os.path.isfile(args.save):
+            print("==> loading checkpoint '{}'".format(args.save))
+            checkpoint = torch.load(args.save)
+            model.load_state_dict(checkpoint.state_dict())
 
     criterion = nn.CrossEntropyLoss()
     criterion = criterion.cuda()
