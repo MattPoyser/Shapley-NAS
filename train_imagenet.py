@@ -17,6 +17,7 @@ import torch.backends.cudnn as cudnn
 
 from torch.autograd import Variable
 from model import NetworkImageNet as Network
+from supernet.search_cnn import SearchCNNController
 import wandb
 
 parser = argparse.ArgumentParser("training imagenet")
@@ -41,6 +42,7 @@ parser.add_argument('--lr_scheduler', type=str, default='linear', help='lr sched
 parser.add_argument('--tmp_data_dir', type=str, default='/tmp/cache/', help='temp data dir')
 parser.add_argument('--note', type=str, default='try', help='note for this run')
 parser.add_argument('--resume', type=str, default=None, help='resume from checkpoint or not?')
+parser.add_argument('--supernet', type=bool, default=False, help='train supernet?')
 
 
 args, unparsed = parser.parse_known_args()
@@ -95,6 +97,10 @@ def main():
     logging.info(genotype)
     print('--------------------------') 
     model = Network(args.init_channels, CLASSES, args.layers, args.auxiliary, genotype)
+    if args.supernet:
+        net_crit = nn.CrossEntropyLoss().cuda()
+        model = SearchCNNController(C_in=3, C=16, n_classes=1000, n_layers=12, criterion=net_crit, n_nodes=8)
+
     if num_gpus > 1:
         model = nn.DataParallel(model)
         model = model.cuda()
@@ -258,7 +264,6 @@ def train(train_queue, model, criterion, optimizer):
                                     step, objs.avg, top1.avg, top5.avg, duration, batch_time.avg)
             wandb.log({"loss": objs.avg, "acc": top1.avg, "top5": top5.avg})
 
-
     return top1.avg, objs.avg
 
 
@@ -290,6 +295,8 @@ def infer(valid_queue, model, criterion):
                 duration = end_time - start_time
                 start_time = time.time()
             logging.info('VALID Step: %03d Objs: %e R1: %f R5: %f Duration: %ds', step, objs.avg, top1.avg, top5.avg, duration)
+            wandb.log({"valid_acc": top1.avg, "valid_top5": top5.avg})
+
 
     return top1.avg, top5.avg, objs.avg
 
