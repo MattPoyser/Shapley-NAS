@@ -18,6 +18,8 @@ import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 from model import NetworkImageNet as Network
 from supernet.search_cnn import SearchCNNController
+from tas.configure_utils import load_config
+from tas.get_tas_models import obtain_model
 import wandb
 
 parser = argparse.ArgumentParser("training imagenet")
@@ -43,6 +45,7 @@ parser.add_argument('--tmp_data_dir', type=str, default='/tmp/cache/', help='tem
 parser.add_argument('--note', type=str, default='try', help='note for this run')
 parser.add_argument('--resume', type=str, default=None, help='resume from checkpoint or not?')
 parser.add_argument('--supernet', type=bool, default=False, help='train supernet?')
+parser.add_argument('--tas', type=bool, default=False, help='train tas model?')
 
 
 args, unparsed = parser.parse_known_args()
@@ -95,11 +98,19 @@ def main():
     genotype = eval("genotypes.%s" % args.arch)
     print('---------Genotype---------')
     logging.info(genotype)
-    print('--------------------------') 
+    print('--------------------------')
     model = Network(args.init_channels, CLASSES, args.layers, args.auxiliary, genotype)
     if args.supernet:
         net_crit = nn.CrossEntropyLoss().cuda()
-        model = SearchCNNController(C_in=3, C=16, n_classes=1000, n_layers=12, criterion=net_crit, n_nodes=8)
+        model = SearchCNNController(C_in=3, C=16, n_classes=1000, n_layers=8, criterion=net_crit, n_nodes=4)
+    elif args.tas:
+        args.auxiliary = False
+        model_config = "/hdd/PhD/nas/tas/output/search-shape/cifar100-ResNet32-CIFARX-Gumbel_0.1_5-0.47/1000aa0.9aa0.6/seed-19592-last.config"
+        model_config = load_config(model_config, {
+            'class_num': 1000,
+        }, logging, grayscale=False)
+        print("model_config", model_config)
+        model = obtain_model(model_config)
 
     if num_gpus > 1:
         model = nn.DataParallel(model)
