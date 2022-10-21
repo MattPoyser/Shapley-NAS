@@ -102,7 +102,7 @@ def main():
     model = Network(args.init_channels, CLASSES, args.layers, args.auxiliary, genotype)
     if args.supernet:
         net_crit = nn.CrossEntropyLoss().cuda()
-        model = SearchCNNController(C_in=3, C=16, n_classes=1000, n_layers=8, criterion=net_crit, n_nodes=4)
+        model = SearchCNNController(C_in=3, C=16, n_classes=1000, n_layers=args.layers, criterion=net_crit, n_nodes=4)
     elif args.tas:
         args.auxiliary = False
         model_config = "/hdd/PhD/nas/tas/output/search-shape/cifar100-ResNet32-CIFARX-Gumbel_0.1_5-0.47/1000aa0.9aa0.6/seed-19592-last.config"
