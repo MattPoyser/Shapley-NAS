@@ -125,7 +125,10 @@ class SearchCNNController(nn.Module):
         outputs = nn.parallel.parallel_apply(replicas,
                                              list(zip(xs, wnormal_copies, wreduce_copies)),
                                              devices=self.device_ids)
-        return nn.parallel.gather(outputs, self.device_ids[0])
+
+        raise AttributeError(nn.parallel.gather(outputs, self.device_ids[0]).shape)
+        # return nn.parallel.gather(outputs, self.device_ids[0])
+        return nn.parallel.gather(outputs, self.device_ids[0]), None
 
     def loss(self, X, y, is_multi):
         logits = self.forward(X)

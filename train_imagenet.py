@@ -101,6 +101,7 @@ def main():
     print('--------------------------')
     model = Network(args.init_channels, CLASSES, args.layers, args.auxiliary, genotype)
     if args.supernet:
+        args.auxiliary = False
         net_crit = nn.CrossEntropyLoss().cuda()
         model = SearchCNNController(C_in=3, C=16, n_classes=1000, n_layers=args.layers, criterion=net_crit, n_nodes=4)
     elif args.tas:
