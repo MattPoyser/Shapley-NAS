@@ -228,7 +228,7 @@ def main():
             'best_acc_top1': best_acc_top1,
             'optimizer' : optimizer.state_dict(),
             }, is_best, args.save)
-        if epoch > 5:
+        if epoch > 5 and args.not_wandb:
             exit()
 
     if not args.not_wandb:
