@@ -22,6 +22,8 @@ from tas.configure_utils import load_config
 from tas.get_tas_models import obtain_model
 import wandb
 
+from scalene import scalene_profiler
+
 parser = argparse.ArgumentParser("training imagenet")
 parser.add_argument('--workers', type=int, default=32, help='number of workers to load dataset')
 parser.add_argument('--batch_size', type=int, default=1024, help='batch size')
@@ -46,6 +48,7 @@ parser.add_argument('--note', type=str, default='try', help='note for this run')
 parser.add_argument('--resume', type=str, default=None, help='resume from checkpoint or not?')
 parser.add_argument('--supernet', type=bool, default=False, help='train supernet?')
 parser.add_argument('--tas', type=bool, default=False, help='train tas model?')
+parser.add_argument('--not_wandb', type=bool, default=False, help='dont use wandb?')
 
 
 args, unparsed = parser.parse_known_args()
@@ -78,12 +81,13 @@ class CrossEntropyLabelSmooth(nn.Module):
         return loss
 
 def main():
-    os.environ['WANDB_SILENT']="true"
-    wandb.init(
-        entity="mattpoyser",
-        project="shapley",
-        config=args,
-    )
+    if not args.not_wandb:
+        os.environ['WANDB_SILENT']="true"
+        wandb.init(
+            entity="mattpoyser",
+            project="shapley",
+            config=args,
+        )
     if not torch.cuda.is_available():
         logging.info('No GPU device available')
         sys.exit(1)
@@ -227,7 +231,11 @@ def main():
             'best_acc_top1': best_acc_top1,
             'optimizer' : optimizer.state_dict(),
             }, is_best, args.save)
-    wandb.finish()
+        if epoch > 5:
+            exit()
+
+    if not args.not_wandb:
+        wandb.finish()
         
 def adjust_lr(optimizer, epoch):
     # Smaller slope for the last 5 epochs because lr * 1/250 is relatively large
@@ -239,6 +247,7 @@ def adjust_lr(optimizer, epoch):
         param_group['lr'] = lr
     return lr        
 
+@profile
 def train(train_queue, model, criterion, optimizer):
     objs = utils.AvgrageMeter()
     top1 = utils.AvgrageMeter()
@@ -277,11 +286,13 @@ def train(train_queue, model, criterion, optimizer):
                 start_time = time.time()
             logging.info('TRAIN Step: %03d Objs: %e R1: %f R5: %f Duration: %ds BTime: %.3fs', 
                                     step, objs.avg, top1.avg, top5.avg, duration, batch_time.avg)
-            wandb.log({"loss": objs.avg, "acc": top1.avg, "top5": top5.avg})
+
+            if not args.not_wandb:
+                wandb.log({"loss": objs.avg, "acc": top1.avg, "top5": top5.avg})
 
     return top1.avg, objs.avg
 
-
+@profile
 def infer(valid_queue, model, criterion):
     objs = utils.AvgrageMeter()
     top1 = utils.AvgrageMeter()
@@ -310,7 +321,9 @@ def infer(valid_queue, model, criterion):
                 duration = end_time - start_time
                 start_time = time.time()
             logging.info('VALID Step: %03d Objs: %e R1: %f R5: %f Duration: %ds', step, objs.avg, top1.avg, top5.avg, duration)
-            wandb.log({"valid_acc": top1.avg, "valid_top5": top5.avg})
+
+            if not args.not_wandb:
+                wandb.log({"valid_acc": top1.avg, "valid_top5": top5.avg})
 
 
     return top1.avg, top5.avg, objs.avg
