@@ -74,7 +74,6 @@ class CrossEntropyLabelSmooth(nn.Module):
         self.logsoftmax = nn.LogSoftmax(dim=1)
 
     def forward(self, inputs, targets):
-        raise AttributeError(inputs.shape, targets.shape)
         log_probs = self.logsoftmax(inputs)
         targets = torch.zeros_like(log_probs).scatter_(1, targets.unsqueeze(1), 1)
         targets = (1 - self.epsilon) * targets + self.epsilon / self.num_classes
