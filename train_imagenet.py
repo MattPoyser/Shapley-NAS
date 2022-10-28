@@ -179,8 +179,6 @@ def main():
         ]))
 
     pin_memory = True
-    if args.supernet:
-        pin_memory = False
     train_queue = torch.utils.data.DataLoader(
         train_data, batch_size=args.batch_size, shuffle=True, pin_memory=pin_memory, num_workers=args.workers)
 
