@@ -22,7 +22,7 @@ from tas.configure_utils import load_config
 from tas.get_tas_models import obtain_model
 import wandb
 
-# from scalene import scalene_profiler
+from scalene import scalene_profiler
 
 parser = argparse.ArgumentParser("training imagenet")
 parser.add_argument('--workers', type=int, default=32, help='number of workers to load dataset')
@@ -244,7 +244,7 @@ def adjust_lr(optimizer, epoch):
         param_group['lr'] = lr
     return lr        
 
-# @profile
+@profile
 def train(train_queue, model, criterion, optimizer):
     objs = utils.AvgrageMeter()
     top1 = utils.AvgrageMeter()
@@ -292,7 +292,7 @@ def train(train_queue, model, criterion, optimizer):
 
     return top1.avg, objs.avg
 
-# @profile
+@profile
 def infer(valid_queue, model, criterion):
     objs = utils.AvgrageMeter()
     top1 = utils.AvgrageMeter()
