@@ -112,7 +112,6 @@ class SearchCNNController(nn.Module):
         weights_reduce = [F.softmax(alpha, dim=-1) for alpha in self.alpha_reduce]
 
         if len(self.device_ids) == 1:
-            raise AttributeError(self.net(x, weights_normal, weights_reduce).shape)
             return self.net(x, weights_normal, weights_reduce)
 
         # scatter x
