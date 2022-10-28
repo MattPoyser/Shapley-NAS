@@ -261,7 +261,10 @@ def train(train_queue, model, criterion, optimizer):
         input = input.cuda(non_blocking=True)
         b_start = time.time()
         optimizer.zero_grad()
-        logits, logits_aux = model(input)
+        if args.supernet:
+            logits = model(input)
+        else:
+            logits, logits_aux = model(input)
         loss = criterion(logits, target)
         if args.auxiliary:
             loss_aux = criterion(logits_aux, target)
