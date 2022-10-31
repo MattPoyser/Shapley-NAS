@@ -303,7 +303,10 @@ def infer(valid_queue, model, criterion):
         input = input.cuda()
         target = target.cuda(non_blocking=True)
         with torch.no_grad():
-            logits, _ = model(input)
+            if args.supernet:
+                logits = model(input)
+            else:
+                logits, logits_aux = model(input)
             loss = criterion(logits, target)
 
         prec1, prec5 = utils.accuracy(logits, target, topk=(1, 5))
