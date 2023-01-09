@@ -110,7 +110,8 @@ def main():
         model = SearchCNNController(C_in=3, C=16, n_classes=1000, n_layers=args.layers, criterion=net_crit, n_nodes=4)
     elif args.tas:
         args.auxiliary = False
-        model_config = "/hdd/PhD/nas/tas/output/search-shape/cifar100-ResNet32-CIFARX-Gumbel_0.1_5-0.47/1000aa0.9aa0.6/seed-19592-last.config"
+        # model_config = "/hdd/PhD/nas/tas/output/search-shape/cifar100-ResNet32-CIFARX-Gumbel_0.1_5-0.47/1000aa0.9aa0.6/seed-19592-last.config"
+        model_config = "/home2/lgfm95/nas/tas/output/search-shape/cifar100-ResNet32-CIFARX-Gumbel_0.1_5-0.47/1000aa0.9aa0.6/seed-19592-last.config"
         model_config = load_config(model_config, {
             'class_num': 1000,
         }, logging, grayscale=False)
